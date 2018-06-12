@@ -1,0 +1,56 @@
+PATCH /api/2.4/inspections/1e3a0b5187993d98829b70c32c006d62 HTTP/1.0
+Authorization: Basic dGVzdF9zYXNfdG9rZW46
+Content-Length: 144
+Content-Type: application/json
+Host: audit-api-dev.prozorro.gov.ua
+
+{
+  "data": {
+    "description": "I regretted my decision", 
+    "monitoring_ids": [
+      "a6b2b18977f24277b238c7b7a5342b1d", 
+      "580997bb06674235801d75f2f6e6c6c6"
+    ]
+  }
+}
+
+
+200 OK
+Content-Type: application/json; charset=UTF-8
+
+{
+  "data": {
+    "documents": [
+      {
+        "hash": "md5:00000000000000000000000000000000", 
+        "author": "monitoring_owner", 
+        "title": "doc.txt", 
+        "url": "http://docs-sandbox.openprocurement.org/get/5281807ce9604e5fa28254168419acff?KeyID=a8968c46&Signature=IAkVEw2K6fvhUpz0iJIgIhn1fIg1n3OOH%2Fq2kmgdT6HyqJY6oUQMAiJvQNnZ7hZkOvQgLbBouonJDj%2FHvBT3Bg%253D%253D", 
+        "format": "plain/text", 
+        "datePublished": "2018-01-01T02:01:00+02:00", 
+        "id": "5366ec14af1734cc92a9a5847f6b121e", 
+        "dateModified": "2018-01-01T02:01:00+02:00"
+      }, 
+      {
+        "hash": "md5:00000000000000000000000000000000", 
+        "author": "monitoring_owner", 
+        "title": "doc(1).json", 
+        "url": "http://docs-sandbox.openprocurement.org/get/f0dd1c6c63ce428f9129348f9a69e53f?KeyID=a8968c46&Signature=EEPEwmlH7nb%252BKJ81gBGomoUkiyYOg%252B4EDjXT23xsWY9N0KUBbU1Ih9j3ST89Ic1ybkO532M9yps0iNLJ8g1nAw%253D%253D", 
+        "format": "application/json", 
+        "datePublished": "2018-01-01T02:01:00+02:00", 
+        "id": "5366ec14af1734cc92a9a5847f6b121e", 
+        "dateModified": "2018-01-01T02:02:00+02:00"
+      }
+    ], 
+    "description": "I regretted my decision", 
+    "monitoring_ids": [
+      "a6b2b18977f24277b238c7b7a5342b1d", 
+      "580997bb06674235801d75f2f6e6c6c6"
+    ], 
+    "inspection_id": "UA-I-2018-01-01-000001", 
+    "dateModified": "2018-01-01T02:03:00+02:00", 
+    "dateCreated": "2018-01-01T02:00:00+02:00", 
+    "id": "1e3a0b5187993d98829b70c32c006d62"
+  }
+}
+

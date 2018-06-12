@@ -3,6 +3,12 @@ from couchdb.design import ViewDefinition
 from openprocurement.api import design
 
 
+def add_design():
+    for i, j in globals().items():
+        if "_view" in i:
+            setattr(design, i, j)
+
+
 FIELDS = ['inspection_id']
 CHANGES_FIELDS = FIELDS + ['dateModified']
 

@@ -1,6 +1,5 @@
-from couchdb import ResourceConflict
-from gevent import sleep
-from openprocurement.audit.api.traversal import factory, inspection_factory
+from openprocurement.audit.inspection.traversal import factory
+from openprocurement.audit.inspection.models import Inspection
 from openprocurement.audit.api.utils import add_revision
 from functools import partial
 from cornice.resource import resource
@@ -8,7 +7,8 @@ from schematics.exceptions import ModelValidationError
 from openprocurement.api.utils import (
     update_logging_context, context_unpack, get_revision_changes,
     apply_data_patch, error_handler, generate_id)
-from openprocurement.audit.inspection.models import Inspection
+from couchdb import ResourceConflict
+from gevent import sleep
 from pkg_resources import get_distribution
 from logging import getLogger
 
@@ -16,7 +16,7 @@ PKG = get_distribution(__package__)
 LOGGER = getLogger(PKG.project_name)
 
 
-op_resource = partial(resource, error_handler=error_handler, factory=inspection_factory)
+op_resource = partial(resource, error_handler=error_handler, factory=factory)
 
 
 def save_inspection(request):
@@ -38,6 +38,14 @@ def save_inspection(request):
                 extra=context_unpack(request, {'MESSAGE_ID': 'save_inspection'})
             )
             return True
+
+def apply_patch(request, data=None, save=True, src=None):
+    data = request.validated['data'] if data is None else data
+    patch = data and apply_data_patch(src or request.context.serialize(), data)
+    if patch:
+        request.context.import_data(patch)
+        if save:
+            return save_inspection(request)
 
 
 def generate_inspection_id(ctime, db, server_id=''):
@@ -68,21 +76,6 @@ def set_logging_context(event):
     update_logging_context(request, params)
 
 
-def _extract_inspection_adapter(request, monitoring_id):
-    db = request.registry.db
-    doc = db.get(monitoring_id)
-    if doc is not None and doc.get('doc_type') == 'monitoring':
-        request.errors.add('url', 'monitoring_id', 'Archived')
-        request.errors.status = 410
-        raise error_handler(request.errors)
-    elif doc is None or doc.get('doc_type') != 'Monitoring':
-        request.errors.add('url', 'monitoring_id', 'Not Found')
-        request.errors.status = 404
-        raise error_handler(request.errors)
-
-    return request.monitoring_from_data(doc)
-
-
 def extract_inspection(request):
     key = "inspection_id"
     uid = request.matchdict.get(key)
@@ -107,7 +100,5 @@ def inspection_serialize(request, data, fields):
     return {i: j for i, j in obj.serialize("view").items() if i in fields}
 
 
-def inspection_from_data(request, data, create=True, **_):
-    if create:
-        return Inspection(data)
-    return Inspection
+def inspection_from_data(request, data, **_):
+    return Inspection(data)

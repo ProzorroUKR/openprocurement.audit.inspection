@@ -17,6 +17,7 @@ from openprocurement.audit.inspection.design import (
 from openprocurement.audit.api.utils import (
     APIResource,
     apply_patch,
+    set_author,
 )
 from openprocurement.api.utils import (
     APIResourceListing,
@@ -70,6 +71,7 @@ class InspectionsResource(APIResourceListing):
         inspection.id = generate_id()
         inspection.inspection_id = generate_inspection_id(get_now(), self.db, self.server_id)
         inspection.dateModified = inspection.dateCreated
+        set_author(inspection.documents, self.request, 'author')
         save_inspection(self.request)
         LOGGER.info('Created inspection {}'.format(inspection.id),
                     extra=context_unpack(self.request,

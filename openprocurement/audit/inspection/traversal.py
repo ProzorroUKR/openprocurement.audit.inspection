@@ -26,7 +26,7 @@ class Root(object):
 def factory(request):
     request.validated['inspection_src'] = {}
     root = Root(request)
-    if not request.matchdict or not request.matchdict.get('inspection_src'):
+    if not request.matchdict or not request.matchdict.get('inspection_id'):
         return root
     request.validated['inspection_id'] = request.matchdict['inspection_id']
     request.inspection.__parent__ = root

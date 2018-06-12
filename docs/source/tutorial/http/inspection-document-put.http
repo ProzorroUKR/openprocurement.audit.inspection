@@ -1,0 +1,32 @@
+PUT /api/2.4/inspections/1e3a0b5187993d98829b70c32c006d62/documents/5366ec14af1734cc92a9a5847f6b121e HTTP/1.0
+Authorization: Basic dGVzdF9zYXNfdG9rZW46
+Content-Length: 323
+Content-Type: application/json
+Host: audit-api-dev.prozorro.gov.ua
+
+{
+  "data": {
+    "url": "http://docs-sandbox.openprocurement.org/get/f0dd1c6c63ce428f9129348f9a69e53f?KeyID=a8968c46&Signature=LTezW%2FkwN1oOETZEDkYXq31cqm%2Fu%2BgIANpHwwODerDh3GRzFXE7v14aLWkPwU1bvoeAxW2qtfp4l7pq9DuEnDw%3D%3D", 
+    "title": "doc(1).json", 
+    "hash": "md5:00000000000000000000000000000000", 
+    "format": "application/json"
+  }
+}
+
+
+200 OK
+Content-Type: application/json; charset=UTF-8
+
+{
+  "data": {
+    "hash": "md5:00000000000000000000000000000000", 
+    "author": "monitoring_owner", 
+    "title": "doc(1).json", 
+    "url": "http://docs-sandbox.openprocurement.org/get/f0dd1c6c63ce428f9129348f9a69e53f?KeyID=a8968c46&Signature=EEPEwmlH7nb%252BKJ81gBGomoUkiyYOg%252B4EDjXT23xsWY9N0KUBbU1Ih9j3ST89Ic1ybkO532M9yps0iNLJ8g1nAw%253D%253D", 
+    "format": "application/json", 
+    "datePublished": "2018-01-01T02:01:00+02:00", 
+    "id": "5366ec14af1734cc92a9a5847f6b121e", 
+    "dateModified": "2018-01-01T02:02:00+02:00"
+  }
+}
+

@@ -1,15 +1,41 @@
-from openprocurement.audit.api.tests.base import BaseWebTest
+from openprocurement.audit.inspection.tests.base import BaseWebTest
 from openprocurement.audit.api.tests.utils import get_errors_field_names
+from freezegun import freeze_time
 import unittest
 
 
+@freeze_time('2018-01-01T11:00:00+02:00')
 class InspectionsListingResourceTest(BaseWebTest):
 
-    def test_get(self):
+    def test_get_empty(self):
         response = self.app.get('/inspections')
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.content_type, 'application/json')
         self.assertEqual(response.json['data'], [])
+
+    def test_get(self):
+        self.create_inspection()
+
+        response = self.app.get('/inspections')
+        self.assertEqual(response.status, '200 OK')
+        self.assertEqual(response.content_type, 'application/json')
+        self.assertEqual(
+            response.json['data'],
+            [{u'dateModified': u'2018-01-01T11:00:00+02:00', u'id': self.inspection_id}]
+        )
+
+    def test_get_opt_fields(self):
+        self.create_inspection()
+
+        response = self.app.get('/inspections?opt_fields=description')
+        self.assertEqual(response.status, '200 OK')
+        self.assertEqual(response.content_type, 'application/json')
+        self.assertEqual(
+            response.json['data'],
+            [{u'dateModified': u'2018-01-01T11:00:00+02:00',
+              u'description': u'Yo-ho-ho',
+              u'id': self.inspection_id}]
+        )
 
     def test_post_inspection_without_authorisation(self):
         self.app.post_json('/inspections', {}, status=403)
@@ -51,6 +77,7 @@ class InspectionsListingResourceTest(BaseWebTest):
             {"id", "inspection_id", "dateModified",
              "dateCreated", "monitoring_ids", "description"}
         )
+        self.assertIn("Location", response.headers)
 
 
 def suite():

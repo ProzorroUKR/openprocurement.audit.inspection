@@ -1,0 +1,17 @@
+GET /api/2.4/inspections HTTP/1.0
+Authorization: Basic dGVzdF9zYXNfdG9rZW46
+Host: audit-api-dev.prozorro.gov.ua
+
+
+200 OK
+Content-Type: application/json; charset=UTF-8
+
+{
+  "next_page": {
+    "path": "/api/2.4/inspections?offset=", 
+    "uri": "http://audit-api-dev.prozorro.gov.ua/api/2.4/inspections?offset=", 
+    "offset": ""
+  }, 
+  "data": []
+}
+

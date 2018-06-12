@@ -52,7 +52,7 @@ class Inspection(BaseModel):
                 'revisions', 'dateModified', 'dateCreated',
                 'doc_id', '_attachments', 'inspection_id'
             ) + schematics_embedded_role,
-            'edit': whitelist("decision", "cancellation"),
+            'edit': whitelist("description", "monitoring_ids"),
             'view': blacklist(
                 '_attachments', 'revisions',
             ) + schematics_embedded_role,
@@ -62,8 +62,8 @@ class Inspection(BaseModel):
 
     monitoring_ids = ListType(MD5Type, required=True, min_size=1)
     description = StringType(required=True)
-    documents = ListType(ModelType(Document), default=list())
 
+    documents = ListType(ModelType(Document), default=list())
     inspection_id = StringType()
     dateModified = IsoDateTimeType()
     dateCreated = IsoDateTimeType(default=get_now)
