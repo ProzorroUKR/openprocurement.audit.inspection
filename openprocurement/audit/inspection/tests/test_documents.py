@@ -1,12 +1,10 @@
 from openprocurement.audit.inspection.tests.base import BaseWebTest
-from openprocurement.audit.api.tests.utils import get_errors_field_names
 from freezegun import freeze_time
 import unittest
 
 
 @freeze_time('2018-01-01T11:00:00+02:00')
 class InspectionDocumentsResourceTest(BaseWebTest):
-
 
     def test_get_list(self):
         self.create_inspection()
@@ -88,17 +86,20 @@ class InspectionDocumentsResourceTest(BaseWebTest):
         self.create_inspection()
 
         self.app.authorization = ('Basic', (self.sas_token, ''))
-        response = self.app.post_json(
-            '/inspections/{}/documents'.format(self.inspection_id),
-            {
-                 "data": {
-                    'title': 'doc.txt',
-                    'url': self.generate_docservice_url(),
-                    'hash': 'md5:' + '0' * 32,
-                    'format': 'plain/text',
+
+        post_time = '2018-01-02T11:30:00+02:00'
+        with freeze_time(post_time):
+            response = self.app.post_json(
+                '/inspections/{}/documents'.format(self.inspection_id),
+                {
+                     "data": {
+                        'title': 'doc.txt',
+                        'url': self.generate_docservice_url(),
+                        'hash': 'md5:' + '0' * 32,
+                        'format': 'plain/text',
+                    }
                 }
-            }
-        )
+            )
         self.assertEqual(response.status, '201 Created')
         self.assertEqual(response.content_type, 'application/json')
         data = response.json['data']
@@ -116,6 +117,12 @@ class InspectionDocumentsResourceTest(BaseWebTest):
             }
         )
         self.assertNotEqual(data["id"], self.document_id)
+        self.assertEqual(data["datePublished"], post_time)
+        self.assertEqual(data["dateModified"], post_time)
+
+        response = self.app.get('/inspections/{}'.format(self.inspection_id))
+        self.assertEqual(response.status, '200 OK')
+        self.assertEqual(response.json["data"]["dateModified"], post_time)
 
     def test_put_forbidden(self):
         self.create_inspection()
@@ -136,17 +143,20 @@ class InspectionDocumentsResourceTest(BaseWebTest):
         self.create_inspection()
 
         self.app.authorization = ('Basic', (self.sas_token, ''))
-        response = self.app.put_json(
-            '/inspections/{}/documents/{}'.format(self.inspection_id, self.document_id),
-            {
-                 "data": {
-                    'title': 'doc.txt',
-                    'url': self.generate_docservice_url(),
-                    'hash': 'md5:' + '0' * 32,
-                    'format': 'plain/text',
+
+        post_time = '2018-01-02T11:30:00+02:00'
+        with freeze_time(post_time):
+            response = self.app.put_json(
+                '/inspections/{}/documents/{}'.format(self.inspection_id, self.document_id),
+                {
+                     "data": {
+                        'title': 'doc.txt',
+                        'url': self.generate_docservice_url(),
+                        'hash': 'md5:' + '0' * 32,
+                        'format': 'plain/text',
+                    }
                 }
-            }
-        )
+            )
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.content_type, 'application/json')
         data = response.json['data']
@@ -165,6 +175,9 @@ class InspectionDocumentsResourceTest(BaseWebTest):
         )
         self.assertEqual(data["id"], self.document_id)
 
+        response = self.app.get('/inspections/{}'.format(self.inspection_id))
+        self.assertEqual(response.status, '200 OK')
+        self.assertEqual(response.json["data"]["dateModified"], post_time)
 
     def test_patch_forbidden(self):
         self.create_inspection()
@@ -185,17 +198,19 @@ class InspectionDocumentsResourceTest(BaseWebTest):
         self.create_inspection()
 
         self.app.authorization = ('Basic', (self.sas_token, ''))
-        response = self.app.patch_json(
-            '/inspections/{}/documents/{}'.format(self.inspection_id, self.document_id),
-            {
-                 "data": {
-                    'title': 'doc.txt',
-                    'url': self.generate_docservice_url(),
-                    'hash': 'md5:' + '0' * 32,
-                    'format': 'plain/text',
+        post_time = '2018-01-02T11:30:00+02:00'
+        with freeze_time(post_time):
+            response = self.app.patch_json(
+                '/inspections/{}/documents/{}'.format(self.inspection_id, self.document_id),
+                {
+                     "data": {
+                        'title': 'doc.txt',
+                        'url': self.generate_docservice_url(),
+                        'hash': 'md5:' + '0' * 32,
+                        'format': 'plain/text',
+                    }
                 }
-            }
-        )
+            )
         self.assertEqual(response.status, '200 OK')
         self.assertEqual(response.content_type, 'application/json')
         data = response.json['data']
@@ -214,6 +229,9 @@ class InspectionDocumentsResourceTest(BaseWebTest):
         )
         self.assertEqual(data["id"], self.document_id)
 
+        response = self.app.get('/inspections/{}'.format(self.inspection_id))
+        self.assertEqual(response.status, '200 OK')
+        self.assertEqual(response.json["data"]["dateModified"], post_time)
 
 
 def suite():

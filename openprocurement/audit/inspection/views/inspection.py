@@ -1,6 +1,7 @@
 from openprocurement.audit.inspection.validation import validate_inspection_data, validate_patch_inspection_data
 from openprocurement.audit.inspection.utils import (
     save_inspection,
+    apply_patch,
     generate_inspection_id,
     inspection_serialize,
     op_resource,
@@ -14,11 +15,7 @@ from openprocurement.audit.inspection.design import (
     inspections_by_local_seq_view,
     FIELDS,
 )
-from openprocurement.audit.api.utils import (
-    APIResource,
-    apply_patch,
-    set_author,
-)
+from openprocurement.audit.api.utils import APIResource, set_author
 from openprocurement.api.utils import (
     APIResourceListing,
     context_unpack,
@@ -70,9 +67,8 @@ class InspectionsResource(APIResourceListing):
         inspection = self.request.validated['inspection']
         inspection.id = generate_id()
         inspection.inspection_id = generate_inspection_id(get_now(), self.db, self.server_id)
-        inspection.dateModified = inspection.dateCreated
         set_author(inspection.documents, self.request, 'author')
-        save_inspection(self.request)
+        save_inspection(self.request, date_modified=inspection.dateCreated)
         LOGGER.info('Created inspection {}'.format(inspection.id),
                     extra=context_unpack(self.request,
                                          {'MESSAGE_ID': 'inspection_create'},
@@ -96,12 +92,7 @@ class InspectionResource(APIResource):
                permission='edit_inspection')
     def patch(self):
         inspection = self.request.validated['inspection']
-
-        apply_patch(self.request, save=False, src=self.request.validated['inspection_src'])
-
-        inspection.dateModified = get_now()
-
-        save_inspection(self.request)
+        apply_patch(self.request, src=self.request.validated['inspection_src'])
         LOGGER.info('Updated monitoring {}'.format(inspection.id),
                     extra=context_unpack(self.request, {'MESSAGE_ID': 'inspection_patch'}))
         return {'data': inspection.serialize('view')}

@@ -6,7 +6,8 @@ from cornice.resource import resource
 from schematics.exceptions import ModelValidationError
 from openprocurement.api.utils import (
     update_logging_context, context_unpack, get_revision_changes,
-    apply_data_patch, error_handler, generate_id)
+    apply_data_patch, error_handler, generate_id, get_now
+)
 from couchdb import ResourceConflict
 from gevent import sleep
 from pkg_resources import get_distribution
@@ -19,11 +20,14 @@ LOGGER = getLogger(PKG.project_name)
 op_resource = partial(resource, error_handler=error_handler, factory=factory)
 
 
-def save_inspection(request):
+def save_inspection(request, date_modified=None):
     inspection = request.validated['inspection']
     patch = get_revision_changes(request.validated['inspection_src'], inspection.serialize("plain"))
     if patch:
         add_revision(request, inspection, patch)
+
+        old_date_modified = inspection.dateModified
+        inspection.dateModified = date_modified or get_now()
         try:
             inspection.store(request.registry.db)
         except ModelValidationError, e:  # pragma: no cover
@@ -34,18 +38,23 @@ def save_inspection(request):
             request.errors.add('body', 'data', str(e))
         else:
             LOGGER.info(
-                'Saved inspection {}'.format(inspection.id),
+                'Saved inspection {}: dateModified {} -> {}'.format(
+                    inspection.id,
+                    old_date_modified and old_date_modified.isoformat(),
+                    inspection.dateModified.isoformat()
+                ),
                 extra=context_unpack(request, {'MESSAGE_ID': 'save_inspection'})
             )
             return True
 
-def apply_patch(request, data=None, save=True, src=None):
+
+def apply_patch(request, data=None, save=True, src=None, date_modified=None):
     data = request.validated['data'] if data is None else data
     patch = data and apply_data_patch(src or request.context.serialize(), data)
     if patch:
         request.context.import_data(patch)
         if save:
-            return save_inspection(request)
+            return save_inspection(request, date_modified=date_modified)
 
 
 def generate_inspection_id(ctime, db, server_id=''):

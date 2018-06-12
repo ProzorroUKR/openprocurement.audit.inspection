@@ -50,7 +50,6 @@ class InspectionResourceTest(BaseWebTest):
         )
         self.assertEqual(data["id"], self.inspection_id)
 
-
     def test_patch_forbidden(self):
         self.create_inspection()
 
@@ -59,6 +58,21 @@ class InspectionResourceTest(BaseWebTest):
             {"description": "I regretted my decision"},
             status=403
         )
+
+    def test_patch_nothing(self):
+        initial_data = self.create_inspection()
+
+        self.app.authorization = ('Basic', (self.sas_token, ''))
+        modified_date = '2018-01-02T13:30:00+02:00'
+        with freeze_time(modified_date):
+            response = self.app.patch_json(
+                '/inspections/{}'.format(self.inspection_id),
+                {"data": {
+                    "description": initial_data["description"],
+                }}
+            )
+        self.assertNotEqual(response.json["data"]["dateModified"], modified_date)
+        self.assertEqual(response.json["data"]["dateModified"], initial_data["dateModified"])
 
     def test_patch(self):
         self.create_inspection()
@@ -111,7 +125,6 @@ class InspectionResourceTest(BaseWebTest):
                 }
             ]
         )
-
 
 
 def suite():
