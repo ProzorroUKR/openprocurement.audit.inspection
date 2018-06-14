@@ -15,7 +15,7 @@ from openprocurement.audit.inspection.design import (
     inspections_by_local_seq_view,
     FIELDS,
 )
-from openprocurement.audit.api.utils import APIResource, set_author
+from openprocurement.audit.api.utils import APIResource, set_author, upload_objects_documents
 from openprocurement.api.utils import (
     APIResourceListing,
     context_unpack,
@@ -68,6 +68,7 @@ class InspectionsResource(APIResourceListing):
         inspection.id = generate_id()
         inspection.inspection_id = generate_inspection_id(get_now(), self.db, self.server_id)
         set_author(inspection.documents, self.request, 'author')
+        upload_objects_documents(self.request, inspection)
         save_inspection(self.request, date_modified=inspection.dateCreated)
         LOGGER.info('Created inspection {}'.format(inspection.id),
                     extra=context_unpack(self.request,
