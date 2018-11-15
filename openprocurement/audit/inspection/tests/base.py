@@ -64,7 +64,9 @@ class BaseWebTest(unittest.TestCase):
         response = self.app.post_json('/inspections', {'data': data})
 
         self.inspection_id = response.json['data']['id']
+        self.inspectionId = response.json['data']['inspection_id']
         self.document_id = response.json['data']['documents'][0]["id"]
+        self.monitoring_ids = response.json['data']['monitoring_ids']
         self.app.authorization = None
 
         return response.json['data']

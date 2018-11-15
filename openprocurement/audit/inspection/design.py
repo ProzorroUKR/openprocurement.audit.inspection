@@ -92,3 +92,32 @@ inspections_by_local_seq_view = ViewDefinition('inspections', 'by_local_seq', ''
         emit(doc._local_seq, data);
     }
 }''' % CHANGES_FIELDS)
+
+
+inspections_by_monitoring_id_view = ViewDefinition('monitorings', 'by_monitoring_id', '''function(doc) {
+    if(doc.doc_type == 'Inspection' && !doc.mode) {
+        var fields=%s, data={};
+        for (var i in fields) {
+            if (doc[fields[i]]) {
+                data[fields[i]] = doc[fields[i]]
+            }
+        }
+        for(var i=0;i<doc.monitoring_ids.length;i++){
+            emit([doc.monitoring_ids[i], doc.dateCreated], data);
+        }
+    }
+}''' % CHANGES_FIELDS)
+
+test_inspections_by_monitoring_id_view = ViewDefinition('monitorings', 'test_by_monitoring_id', '''function(doc) {
+    if(doc.doc_type == 'Inspection' && doc.mode == 'test') {
+        var fields=%s, data={};
+        for (var i in fields) {
+            if (doc[fields[i]]) {
+                data[fields[i]] = doc[fields[i]]
+            }
+        }
+        for(var i=0;i<doc.monitoring_ids.length;i++){
+            emit([doc.monitoring_ids[i], doc.dateCreated], data);
+        }
+    }
+}''' % CHANGES_FIELDS)
