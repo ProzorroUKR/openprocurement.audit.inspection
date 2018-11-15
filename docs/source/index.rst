@@ -15,3 +15,4 @@ It's a part of openprocurement.audit.api_
 
    tutorial/index
    standard/index
+   inspections_by_monitoring/index
