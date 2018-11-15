@@ -49,7 +49,7 @@ class InspectionsListingResourceTest(BaseWebTest):
         response = self.app.post_json('/inspections', {}, status=422)
         self.assertEqual(
             {('body', 'data')},
-            get_errors_field_names(response, "Data not available"))
+            set(get_errors_field_names(response, "Data not available")))
 
     def test_post_inspection_sas_empty_data(self):
         self.app.authorization = ('Basic', (self.sas_token, ''))
@@ -57,7 +57,7 @@ class InspectionsListingResourceTest(BaseWebTest):
         self.assertEqual(
             {('body', "monitoring_ids"),
              ('body', "description")},
-            get_errors_field_names(response, 'This field is required.')
+            set(get_errors_field_names(response, 'This field is required.'))
         )
 
     def test_post_inspection_sas(self):
