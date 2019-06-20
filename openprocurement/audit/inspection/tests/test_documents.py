@@ -85,7 +85,7 @@ class InspectionDocumentsResourceTest(BaseWebTest):
     def test_post(self):
         self.create_inspection()
 
-        self.app.authorization = ('Basic', (self.sas_token, ''))
+        self.app.authorization = ('Basic', (self.sas_name, self.sas_pass))
 
         post_time = '2018-01-02T11:30:00+02:00'
         with freeze_time(post_time):
@@ -142,7 +142,7 @@ class InspectionDocumentsResourceTest(BaseWebTest):
     def test_put(self):
         self.create_inspection()
 
-        self.app.authorization = ('Basic', (self.sas_token, ''))
+        self.app.authorization = ('Basic', (self.sas_name, self.sas_pass))
 
         post_time = '2018-01-02T11:30:00+02:00'
         with freeze_time(post_time):
@@ -197,7 +197,7 @@ class InspectionDocumentsResourceTest(BaseWebTest):
     def test_patch(self):
         self.create_inspection()
 
-        self.app.authorization = ('Basic', (self.sas_token, ''))
+        self.app.authorization = ('Basic', (self.sas_name, self.sas_pass))
         post_time = '2018-01-02T11:30:00+02:00'
         with freeze_time(post_time):
             response = self.app.patch_json(

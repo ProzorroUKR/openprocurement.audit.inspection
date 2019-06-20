@@ -5,6 +5,7 @@ version = '1.0.1'
 requires = [
     'setuptools',
     'openprocurement.api>=2.4',
+    'openprocurement.audit.api>=1.0.9',
     'openprocurement.tender.core>=2.4',
     'restkit>=0.27.2'
 ]
