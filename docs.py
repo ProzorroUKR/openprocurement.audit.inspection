@@ -160,3 +160,51 @@ class InspectionResourceTest(BaseDocWebTest):
                     }
                 )
         self.assertEqual(response.status, '200 OK')
+
+
+class InspectionsByMonitoringResourceTest(BaseDocWebTest):
+    def setUp(self):
+        super(InspectionsByMonitoringResourceTest, self).setUp()
+        self.app.app.registry.docservice_url = 'http://docs-sandbox.openprocurement.org'
+
+    def test_tutorial(self):
+
+        self.app.authorization = ('Basic', (self.sas_token, ''))
+
+        monitoring_id = "580997bb06674235801d75f2f6e6c6c6"
+
+        response = self.app.post_json(
+            '/inspections',
+            {
+                "data": {
+                    "monitoring_ids": [monitoring_id],
+                    "description": "La-la",
+                }
+            }
+        )
+        self.assertEqual(response.status, '201 Created')
+
+        with freeze_time("2018.01.01 00:01"):
+            response = self.app.post_json(
+                '/inspections',
+                {
+                    "data": {
+                        "monitoring_ids": [monitoring_id],
+                        "description": "Inspection is an official visit to a building or organization to check "
+                                       "that everything is satisfactory and that rules are being obeyed",
+                    }
+                }
+            )
+            self.assertEqual(response.status, '201 Created')
+
+        with open('docs/source/inspections_by_monitoring/http/inspections-by-monitoring_id.http', 'w') \
+                  as self.app.file_obj:
+            response = self.app.get('/monitorings/{}/inspections'.format(monitoring_id))
+        self.assertEqual(response.status, '200 OK')
+        self.assertEqual(len(response.json["data"]), 2)
+
+        with open('docs/source/inspections_by_monitoring/http/inspections-by-monitoring_id-opt_fields.http', 'w') \
+                  as self.app.file_obj:
+            response = self.app.get('/monitorings/{}/inspections?opt_fields=description'.format(monitoring_id))
+        self.assertEqual(response.status, '200 OK')
+        self.assertEqual(len(response.json["data"]), 2)

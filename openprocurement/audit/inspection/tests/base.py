@@ -30,10 +30,10 @@ class BaseWebTest(unittest.TestCase):
         self.db = self.app.app.registry.db
         self.app.app.registry.docservice_url = 'http://localhost'
 
-        config = ConfigParser.RawConfigParser()
-        config.read(os.path.join(os.path.dirname(__file__), 'auth.ini'))
-        self.broker_token = config.get("brokers", "broker")
-        self.sas_token = config.get("sas", "test_sas")
+        self.broker_name = "broker"
+        self.broker_pass = "broker"
+        self.sas_name = "test_sas"
+        self.sas_pass = "test_sas_token"
 
     def tearDown(self):
         del self.couchdb_server[self.db.name]
@@ -60,7 +60,7 @@ class BaseWebTest(unittest.TestCase):
             ]
         }
         data.update(kwargs)
-        self.app.authorization = ('Basic', (self.sas_token, ''))
+        self.app.authorization = ('Basic', (self.sas_name, self.sas_pass))
         response = self.app.post_json('/inspections', {'data': data})
 
         self.inspection_id = response.json['data']['id']
