@@ -62,7 +62,7 @@ class InspectionResourceTest(BaseWebTest):
     def test_patch_nothing(self):
         initial_data = self.create_inspection()
 
-        self.app.authorization = ('Basic', (self.sas_token, ''))
+        self.app.authorization = ('Basic', (self.sas_name, self.sas_pass))
         modified_date = '2018-01-02T13:30:00+02:00'
         with freeze_time(modified_date):
             response = self.app.patch_json(
@@ -77,7 +77,7 @@ class InspectionResourceTest(BaseWebTest):
     def test_patch(self):
         self.create_inspection()
 
-        self.app.authorization = ('Basic', (self.sas_token, ''))
+        self.app.authorization = ('Basic', (self.sas_name, self.sas_pass))
         request_data = {
             "description": "I regretted my decision",
             "monitoring_ids": ["5" * 32, "3" * 32]
@@ -96,7 +96,7 @@ class InspectionResourceTest(BaseWebTest):
     def test_patch_validation_error(self):
         self.create_inspection()
 
-        self.app.authorization = ('Basic', (self.sas_token, ''))
+        self.app.authorization = ('Basic', (self.sas_name, self.sas_pass))
         request_data = {
             "description": 12.5,
             "monitoring_ids": "something else"
